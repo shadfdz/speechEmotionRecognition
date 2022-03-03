@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def main():
+def create_dataframe(ravdess_path, data_path):
     ravdess_emotions = {
         "01": "neutral",
         "02": "calm",
@@ -36,8 +36,6 @@ def main():
         "su": "surprised",
     }
 
-    ravdess_path = "/Volumes/Transcend/BDA600/data/Ravdess/audio_speech_actors_01-24/"  # pragma: allowlist secret
-    data_path = "/Volumes/Transcend/BDA600/data/"
     processed_data = []
     # loop through ravdess dataset and add path, filename, and emotion to the list
     for i in os.listdir(ravdess_path):
@@ -58,6 +56,8 @@ def main():
                 elif i == "Tess":
                     if j.split("_")[-1].split(".")[0] == "ps":
                         emotion = "surprised"
+                    elif j.split("_")[-1].split(".")[0] == "fear":
+                        emotion = "fearful"
                     else:
                         emotion = j.split("_")[-1].split(".")[0]
                 else:
@@ -71,6 +71,16 @@ def main():
 
     # turn list of all data into pandas dataframe
     processed_df = pd.DataFrame(processed_data, columns=["path", "filename", "emotion"])
+    return processed_df
+
+
+def main():
+
+    ravdess_path = "/Volumes/Transcend/BDA600/data/Ravdess/audio_speech_actors_01-24/"  # pragma: allowlist secret
+    data_path = "/Volumes/Transcend/BDA600/data/"
+    processed_df = create_dataframe(ravdess_path, data_path)
+
+    print(processed_df["emotion"].value_counts())
 
     audio_array, sampling_array = librosa.load(
         processed_df["path"][0], duration=3.5, offset=0.6
