@@ -4,6 +4,7 @@ import librosa
 import librosa.display
 import matplotlib.pyplot as plt
 import pandas as pd
+import plotly.express as px
 
 
 def create_dataframe(ravdess_path, data_path):
@@ -82,13 +83,36 @@ def main():
 
     print(processed_df["emotion"].value_counts())
 
-    audio_array, sampling_array = librosa.load(
-        processed_df["path"][0], duration=3.5, offset=0.6
-    )
-    plt.figure(figsize=(12, 4))
-    librosa.display.waveshow(audio_array, sr=sampling_array)
-    plt.title(processed_df["emotion"][0])
-    plt.show()
+    fig = px.histogram(processed_df, "emotion")
+    fig.show()
+
+    happy_count = 0
+    sad_count = 0
+    angry_count = 0
+    count = 0
+    for i in processed_df["emotion"]:
+        if i == "happy" and happy_count < 5:
+            audio_array, sampling_array = librosa.load(
+                processed_df["path"][count], duration=3.5, offset=0.6
+            )
+            happy_count += 1
+        elif i == "sad" and sad_count < 5:
+            audio_array, sampling_array = librosa.load(
+                processed_df["path"][count], duration=3.5, offset=0.6
+            )
+            sad_count += 1
+        elif i == "angry" and angry_count < 5:
+            audio_array, sampling_array = librosa.load(
+                processed_df["path"][count], duration=3.5, offset=0.6
+            )
+            angry_count += 1
+        else:
+            count += 1
+            continue
+        librosa.display.waveshow(audio_array, sr=sampling_array)
+        plt.title(processed_df["emotion"][count])
+        plt.show()
+        count += 1
 
 
 if __name__ == "__main__":
