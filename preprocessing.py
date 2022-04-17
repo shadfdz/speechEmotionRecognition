@@ -253,8 +253,6 @@ def main():
 
     # create_wave_graph(processed_df, ["happy", "sad", "neutral"], 15)
 
-    # need to convert these sound files into numeric values somehow,
-    # look at previous work in papers to get some ideas
 
     print(main_df.head())
 
